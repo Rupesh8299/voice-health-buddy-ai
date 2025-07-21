@@ -3,23 +3,34 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { TextToSpeech } from './TextToSpeech';
 
 interface Message {
   id: string;
   content: string;
   sender: 'user' | 'assistant';
   timestamp: Date;
-  type?: 'text' | 'image';
+  type?: 'text' | 'image' | 'video';
+  mediaItems?: Array<{
+    id: string;
+    type: 'image' | 'video';
+    preview: string;
+    file: File;
+  }>;
 }
 
 interface ChatInterfaceProps {
   messages: Message[];
   isLoading?: boolean;
+  autoSpeak?: boolean;
+  onSpeakingChange?: (isSpeaking: boolean) => void;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   messages,
-  isLoading = false
+  isLoading = false,
+  autoSpeak = false,
+  onSpeakingChange
 }) => {
   return (
     <div className="space-y-4 max-h-96 overflow-y-auto">
@@ -46,7 +57,41 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               : "bg-card shadow-card hover:shadow-soft"
           )}>
             <CardContent className="p-3">
-              <p className="text-sm leading-relaxed">{message.content}</p>
+              {/* Message Content */}
+              <div className="flex items-start gap-2">
+                <p className="text-sm leading-relaxed flex-1">{message.content}</p>
+                {message.sender === 'assistant' && (
+                  <TextToSpeech
+                    text={message.content}
+                    autoPlay={autoSpeak}
+                    onSpeakingChange={onSpeakingChange}
+                  />
+                )}
+              </div>
+              
+              {/* Media Items */}
+              {message.mediaItems && message.mediaItems.length > 0 && (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {message.mediaItems.map((item) => (
+                    <div key={item.id} className="relative">
+                      {item.type === 'image' ? (
+                        <img
+                          src={item.preview}
+                          alt="Shared"
+                          className="w-full h-20 object-cover rounded border"
+                        />
+                      ) : (
+                        <video
+                          src={item.preview}
+                          className="w-full h-20 object-cover rounded border"
+                          controls
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
               <div className="flex items-center justify-between mt-2">
                 <Badge variant="secondary" className="text-xs">
                   {message.timestamp.toLocaleTimeString([], { 
@@ -54,11 +99,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     minute: '2-digit' 
                   })}
                 </Badge>
-                {message.type === 'image' && (
-                  <Badge variant="outline" className="text-xs">
-                    Image
-                  </Badge>
-                )}
+                <div className="flex gap-1">
+                  {message.type === 'image' && (
+                    <Badge variant="outline" className="text-xs">
+                      Image
+                    </Badge>
+                  )}
+                  {message.type === 'video' && (
+                    <Badge variant="outline" className="text-xs">
+                      Video
+                    </Badge>
+                  )}
+                  {message.mediaItems && message.mediaItems.length > 0 && (
+                    <Badge variant="outline" className="text-xs">
+                      {message.mediaItems.length} file{message.mediaItems.length > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

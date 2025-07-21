@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { VoiceRecorder } from '@/components/VoiceRecorder';
-import { ImageUpload } from '@/components/ImageUpload';
+import { ContinuousVoiceRecorder } from '@/components/ContinuousVoiceRecorder';
+import { MultiMediaUpload } from '@/components/MultiMediaUpload';
 import { ChatInterface } from '@/components/ChatInterface';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { sendMessage, uploadImage } from '@/services/api';
@@ -16,24 +16,47 @@ interface Message {
   content: string;
   sender: 'user' | 'assistant';
   timestamp: Date;
-  type?: 'text' | 'image';
+  type?: 'text' | 'image' | 'video';
+  mediaItems?: Array<{
+    id: string;
+    type: 'image' | 'video';
+    preview: string;
+    file: File;
+  }>;
+}
+
+interface MediaItem {
+  id: string;
+  file: File;
+  type: 'image' | 'video';
+  preview: string;
+  timestamp: Date;
 }
 
 export const HealthAssistant: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentTranscript, setCurrentTranscript] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isConversationMode, setIsConversationMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [conversationId, setConversationId] = useState<string>('');
+  const [pendingTranscript, setPendingTranscript] = useState('');
   const { toast } = useToast();
 
-  const addMessage = (content: string, sender: 'user' | 'assistant', type: 'text' | 'image' = 'text') => {
+  const addMessage = (
+    content: string, 
+    sender: 'user' | 'assistant', 
+    type: 'text' | 'image' | 'video' = 'text',
+    mediaItems?: Array<{id: string; type: 'image' | 'video'; preview: string; file: File}>
+  ) => {
     const message: Message = {
       id: Date.now().toString(),
       content,
       sender,
       timestamp: new Date(),
-      type
+      type,
+      mediaItems
     };
     setMessages(prev => [...prev, message]);
   };
@@ -67,39 +90,72 @@ export const HealthAssistant: React.FC = () => {
     }
   };
 
-  const handleTranscriptChange = (transcript: string) => {
-    setCurrentTranscript(transcript);
+  const handleTranscriptChange = (transcript: string, isFinal: boolean) => {
+    if (isFinal) {
+      if (transcript.trim()) {
+        handleSendMessage(transcript);
+      }
+      setPendingTranscript('');
+      setCurrentTranscript('');
+    } else {
+      setPendingTranscript(transcript);
+      setCurrentTranscript(transcript);
+    }
   };
 
-  const handleRecordingStateChange = (recording: boolean) => {
-    setIsRecording(recording);
-    if (!recording && currentTranscript.trim()) {
-      handleSendMessage(currentTranscript);
+  const handleConversationModeChange = (isActive: boolean) => {
+    setIsConversationMode(isActive);
+    if (!isActive) {
+      setPendingTranscript('');
       setCurrentTranscript('');
     }
   };
 
-  const handleImageUpload = async (file: File) => {
-    addMessage(`Uploaded image: ${file.name}`, 'user', 'image');
+  const handleMediaUpload = async (mediaItems: MediaItem[]) => {
+    if (mediaItems.length === 0) return;
+
+    const mediaItemsForMessage = mediaItems.map(item => ({
+      id: item.id,
+      type: item.type,
+      preview: item.preview,
+      file: item.file
+    }));
+
+    const fileNames = mediaItems.map(item => item.file.name).join(', ');
+    const messageContent = `Uploaded ${mediaItems.length} file${mediaItems.length > 1 ? 's' : ''}: ${fileNames}`;
+    
+    addMessage(messageContent, 'user', mediaItems.length === 1 ? mediaItems[0].type : 'text', mediaItemsForMessage);
     setIsLoading(true);
 
     try {
-      const response = await uploadImage(file);
-      addMessage(response.insights, 'assistant');
-      
-      if (response.recommendations) {
-        const recommendationsText = "Recommendations:\n" + response.recommendations.join('\n• ');
-        addMessage(recommendationsText, 'assistant');
+      // Process images
+      const imageItems = mediaItems.filter(item => item.type === 'image');
+      if (imageItems.length > 0) {
+        for (const item of imageItems) {
+          const response = await uploadImage(item.file);
+          addMessage(response.insights, 'assistant');
+          
+          if (response.recommendations) {
+            const recommendationsText = "Recommendations:\n" + response.recommendations.join('\n• ');
+            addMessage(recommendationsText, 'assistant');
+          }
+        }
+      }
+
+      // Note: Video processing would be implemented similarly
+      const videoItems = mediaItems.filter(item => item.type === 'video');
+      if (videoItems.length > 0) {
+        addMessage(`Received ${videoItems.length} video file${videoItems.length > 1 ? 's' : ''}. Video analysis coming soon.`, 'assistant');
       }
 
       toast({
-        title: "Image analyzed",
-        description: "Your image has been processed successfully.",
+        title: "Media analyzed",
+        description: `${mediaItems.length} file${mediaItems.length > 1 ? 's' : ''} processed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to analyze image. Please try again.",
+        description: "Failed to analyze media. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -107,21 +163,41 @@ export const HealthAssistant: React.FC = () => {
     }
   };
 
+  const handleLiveVideoStart = () => {
+    addMessage("Started live video sharing", 'user', 'video');
+    toast({
+      title: "Live video started",
+      description: "Sharing live video feed with assistant.",
+    });
+  };
+
+  const handleLiveVideoStop = () => {
+    addMessage("Stopped live video sharing", 'user', 'text');
+    toast({
+      title: "Live video stopped",
+      description: "Video sharing has ended.",
+    });
+  };
+
+  const handleSpeakingChange = (speaking: boolean) => {
+    setIsSpeaking(speaking);
+  };
+
   const features = [
     {
       icon: <Mic className="h-5 w-5" />,
-      title: "Voice Input",
-      description: "Describe your symptoms naturally"
+      title: "Real-time Voice",
+      description: "Continuous conversation with voice responses"
     },
     {
       icon: <Camera className="h-5 w-5" />,
-      title: "Visual Analysis",
-      description: "Upload photos of visible symptoms"
+      title: "Multi-Media Upload",
+      description: "Share multiple photos, videos, or live stream"
     },
     {
       icon: <MessageCircle className="h-5 w-5" />,
-      title: "AI Consultation",
-      description: "Get immediate medical guidance"
+      title: "Live AI Consultation",
+      description: "Real-time medical guidance with immediate responses"
     }
   ];
 
@@ -171,36 +247,48 @@ export const HealthAssistant: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mic className="h-5 w-5 text-primary" />
-                  Voice Input
+                  Real-time Voice
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <VoiceRecorder
+                <ContinuousVoiceRecorder
                   onTranscriptChange={handleTranscriptChange}
-                  onRecordingStateChange={handleRecordingStateChange}
-                  disabled={isLoading}
+                  onConversationModeChange={handleConversationModeChange}
+                  disabled={isLoading || isSpeaking}
                 />
-                {currentTranscript && (
+                {(currentTranscript || pendingTranscript) && (
                   <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-1">Current transcript:</p>
-                    <p className="text-sm">{currentTranscript}</p>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      {pendingTranscript ? "Listening..." : "Transcript:"}
+                    </p>
+                    <p className="text-sm">{currentTranscript || pendingTranscript}</p>
+                  </div>
+                )}
+                {isConversationMode && (
+                  <div className="mt-2 p-2 bg-accent/10 rounded-lg border border-accent/20">
+                    <p className="text-xs text-accent">
+                      🎙️ Conversation mode active - speak naturally, assistant will respond with voice
+                    </p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Image Upload */}
+            {/* Multi-Media Upload */}
             <Card className="shadow-card hover:shadow-soft transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Camera className="h-5 w-5 text-accent" />
-                  Visual Symptoms
+                  Multi-Media Sharing
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ImageUpload
-                  onImageUpload={handleImageUpload}
+                <MultiMediaUpload
+                  onMediaUpload={handleMediaUpload}
+                  onLiveVideoStart={handleLiveVideoStart}
+                  onLiveVideoStop={handleLiveVideoStop}
                   disabled={isLoading}
+                  maxItems={5}
                 />
               </CardContent>
             </Card>
@@ -244,15 +332,27 @@ export const HealthAssistant: React.FC = () => {
                       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Activity className="h-8 w-8 text-primary" />
                       </div>
-                      <h3 className="font-medium mb-2">Start Your Consultation</h3>
+                      <h3 className="font-medium mb-2">Start Real-time Consultation</h3>
                       <p className="text-sm text-muted-foreground">
-                        Use the voice recorder or upload an image to begin describing your symptoms.
+                        Enable conversation mode for hands-free interaction, or upload multiple media files to share symptoms.
                       </p>
+                      {isConversationMode && (
+                        <div className="mt-3 p-2 bg-accent/10 rounded-lg border border-accent/20">
+                          <p className="text-xs text-accent">
+                            🎙️ Ready to listen and respond
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
                   <div className="flex-1 overflow-hidden">
-                    <ChatInterface messages={messages} isLoading={isLoading} />
+                    <ChatInterface 
+                      messages={messages} 
+                      isLoading={isLoading}
+                      autoSpeak={isConversationMode}
+                      onSpeakingChange={handleSpeakingChange}
+                    />
                   </div>
                 )}
               </CardContent>
