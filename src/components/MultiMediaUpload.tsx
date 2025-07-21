@@ -160,10 +160,11 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
             <div className="relative">
               <video
                 ref={liveVideoRef}
-                className="w-full rounded-lg"
+                className="w-full h-64 rounded-lg bg-black object-cover"
                 autoPlay
                 muted
                 playsInline
+                style={{ minHeight: '256px' }}
               />
               <div className="absolute top-2 right-2 flex gap-2">
                 <div className="px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">
