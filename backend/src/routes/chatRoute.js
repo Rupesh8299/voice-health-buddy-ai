@@ -49,7 +49,7 @@ router.post('/chat', async (req, res) => {
 });
 
 // New endpoint: POST /api/message
-router.post('/api/message', async (req, res) => {
+router.post('/message', async (req, res) => {
   const { message, conversationId } = req.body;
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid message' });
