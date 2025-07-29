@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-<<<<<<< HEAD
+// POST /api/chat - For general chat with history
 router.post('/chat', async (req, res) => {
   console.log('Received POST /chat');
   console.log('Request body:', req.body);
@@ -20,7 +20,7 @@ router.post('/chat', async (req, res) => {
         content:
           "You are a helpful medical assistant. Ask detailed follow-up questions like a professional doctor before suggesting a diagnosis. Be clinical, professional, and cautious. Do not guess or give final diagnosis without enough info.",
       },
-      ...messages
+      ...messages,
     ],
   };
   console.log('Sending to OpenRouter:', payload);
@@ -49,11 +49,9 @@ router.post('/chat', async (req, res) => {
   }
 });
 
-// New endpoint: POST /api/message
-=======
->>>>>>> 86f1fe4 (New Commit wit wirking Frontend and Backend but no working of MedGemma)
+// POST /api/message - For message-by-message flow with suggestions
 router.post('/message', async (req, res) => {
-  const { message, conversationId } = req.body;
+  const { message, conversationId, history } = req.body;
 
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid message' });
@@ -65,12 +63,13 @@ router.post('/message', async (req, res) => {
       {
         role: 'system',
         content:
-        "You are a helpful and professional medical assistant. Ask only **one or two follow-up questions at a time**, like a real doctor having a conversation. Be clinical, cautious, and do not jump to conclusions or diagnosis without enough information. Continue the conversation step by step based on the user's responses.",
+          "You are a helpful and professional medical assistant. Ask only one or two follow-up questions at a time, like a real doctor having a conversation. Be clinical, cautious, and do not jump to conclusions or diagnosis without enough information. Continue the conversation step by step based on the user's responses.",
       },
+      ...(history || []),
       {
         role: 'user',
         content: message,
-      }
+      },
     ],
   };
 
@@ -87,8 +86,10 @@ router.post('/message', async (req, res) => {
         },
       }
     );
+
     const reply = response.data.choices[0].message.content;
 
+    // Extract suggested follow-up questions
     const suggestions = [];
     const lines = reply.split('\n');
     for (const line of lines) {
@@ -107,7 +108,7 @@ router.post('/message', async (req, res) => {
     res.json({
       reply,
       conversationId,
-      suggestions
+      suggestions,
     });
   } catch (err) {
     console.error('❌ GPT error:', err.message);
