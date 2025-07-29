@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const chatRoute = require('./routes/chatRoute');
+const imageRoutes = require('./routes/imageRoute');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,11 +13,13 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api', chatRoute);
+app.use('/api', imageRoutes);
+
 
 // Middleware to log client connection and check port match
 app.use((req, res, next) => {
   const origin = req.headers.origin || 'unknown';
-  const expectedFrontendPort = '3000';
+  const expectedFrontendPort = '8080';
   const serverPort = PORT.toString();
 
   // Extract port from origin if present

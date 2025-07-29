@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
+<<<<<<< HEAD
 router.post('/chat', async (req, res) => {
   console.log('Received POST /chat');
   console.log('Request body:', req.body);
@@ -49,12 +50,14 @@ router.post('/chat', async (req, res) => {
 });
 
 // New endpoint: POST /api/message
+=======
+>>>>>>> 86f1fe4 (New Commit wit wirking Frontend and Backend but no working of MedGemma)
 router.post('/message', async (req, res) => {
   const { message, conversationId } = req.body;
+
   if (!message || typeof message !== 'string') {
     return res.status(400).json({ error: 'Missing or invalid message' });
   }
-  // Optionally validate conversationId
 
   const payload = {
     model: 'openai/gpt-3.5-turbo',
@@ -62,7 +65,7 @@ router.post('/message', async (req, res) => {
       {
         role: 'system',
         content:
-          "You are a helpful medical assistant. Ask detailed follow-up questions like a professional doctor before suggesting a diagnosis. Be clinical, professional, and cautious. Do not guess or give final diagnosis without enough info.",
+        "You are a helpful and professional medical assistant. Ask only **one or two follow-up questions at a time**, like a real doctor having a conversation. Be clinical, cautious, and do not jump to conclusions or diagnosis without enough information. Continue the conversation step by step based on the user's responses.",
       },
       {
         role: 'user',
@@ -86,7 +89,6 @@ router.post('/message', async (req, res) => {
     );
     const reply = response.data.choices[0].message.content;
 
-    // Simple suggestion extraction (mock): extract questions from reply
     const suggestions = [];
     const lines = reply.split('\n');
     for (const line of lines) {
@@ -94,7 +96,6 @@ router.post('/message', async (req, res) => {
         suggestions.push(line.trim());
       }
     }
-    // If no suggestions found, add generic ones
     if (suggestions.length === 0) {
       suggestions.push(
         "Can you describe your symptoms in more detail?",

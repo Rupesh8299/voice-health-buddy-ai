@@ -2,10 +2,19 @@
 
 const API_BASE_URL = '/api'; // Will be configured for your backend
 
+// Define ChatMessage type for OpenRouter messages
+export type ChatMessage = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
 export interface MessageRequest {
   message: string;
   conversationId?: string;
+  history?: ChatMessage[];
 }
+
+
 
 export interface MessageResponse {
   reply: string;
@@ -56,7 +65,7 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`${API_BASE_URL}/upload-image`, {
+    const response = await fetch(`${API_BASE_URL}/upload/image`, {
       method: 'POST',
       body: formData,
     });
