@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const chatRoute = require('./routes/chatRoute');
-const imageRoutes = require('./routes/imageRoutes');
+const chatRoute = require('./src/routes/chatRoute');
+const imageRoutes = require('./src/routes/imageRoute');
 
 dotenv.config();
 

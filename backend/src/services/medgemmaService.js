@@ -24,7 +24,8 @@ async function analyzeImage(imageBuffer) {
   };
 
   try {
-    const [response] = await predictionService.predict(request);
+    console.log("Sending image to MedGemma...");
+    const [response] = await client.predict(request); // <-- fix: use 'client'
     console.log("✅ MedGemma raw response:", response);
 
     if (!response.predictions || response.predictions.length === 0) {
@@ -32,11 +33,14 @@ async function analyzeImage(imageBuffer) {
       return 'No visible findings in the image.';
     }
 
+    console.log("✅ Analysis result:", response.predictions[0]); // log final result
     return response.predictions[0];
   } catch (error) {
     console.error("❌ MedGemma API error:", error.message);
     return 'Failed to analyze image.';
   }
+
+  // return "Dummy analysis result"; // Uncomment for dummy data
 }
 
 

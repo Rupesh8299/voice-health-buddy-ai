@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Camera, Upload, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Camera, Upload, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
@@ -11,7 +11,7 @@ interface ImageUploadProps {
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onImageUpload,
-  disabled = false
+  disabled = false,
 }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -19,7 +19,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreview(e.target?.result as string);
@@ -57,17 +57,19 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const clearPreview = () => {
     setPreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   return (
     <div className="space-y-4">
-      <Card className={cn(
-        "transition-all duration-300",
-        dragOver && "border-primary shadow-glow",
-        preview && "border-accent"
-      )}>
+      <Card
+        className={cn(
+          "transition-all duration-300",
+          dragOver && "border-primary shadow-glow",
+          preview && "border-accent"
+        )}
+      >
         <CardContent className="p-6">
           {preview ? (
             <div className="space-y-4">
@@ -106,7 +108,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                   <Upload className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">Upload a photo of your symptom</p>
+                  <p className="text-sm font-medium">
+                    Upload a photo of your symptom
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Drag and drop, use camera, or browse files
                   </p>

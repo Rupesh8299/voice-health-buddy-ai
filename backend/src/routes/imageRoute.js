@@ -1,12 +1,13 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
-const multerUpload = require('../utils/multerUpload');
-const { handleImageUpload } = require('../controllers/imageController');
+const imageController = require('../controllers/imageController');
 
-router.post('/image', multerUpload.single('image'), (req, res, next) => {
-  console.log('✅ Route hit: /api/image');
-  next();
-}, handleImageUpload);
+const upload = multer();
 
+router.post('/analyze-image', upload.single('image'), (req, res) => {
+  console.log("🔍 Image received");
+  imageController.handleImageUpload(req, res);
+});
 
 module.exports = router;

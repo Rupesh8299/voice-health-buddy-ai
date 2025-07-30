@@ -3,6 +3,7 @@ const { getAIResponse } = require('../services/openaiService');
 
 const handleImageUpload = async (req, res) => {
   try {
+    console.log("🛂 Controller: handleImageUpload called");
     console.log("📥 Incoming image upload...");
     console.log("File received:", req.file?.originalname);
     console.log("File size:", req.file?.size);
@@ -16,6 +17,7 @@ const handleImageUpload = async (req, res) => {
 
     // Step 1: MedGemma analysis
     console.log("🧠 Sending to MedGemma...");
+    console.log("🛂 Controller: calling medgemmaService.analyzeImage");
     const gemmaAnalysis = await analyzeImage(imageBuffer);
     console.log("🧠 MedGemma result:", gemmaAnalysis);
 
@@ -37,7 +39,7 @@ const handleImageUpload = async (req, res) => {
       analysis: response,
     });
   } catch (error) {
-    console.error('❌ Image handling failed:', error.message);
+    console.error('❌ Error in imageController:', error.message);
     res.status(500).json({ error: 'Image processing failed.' });
   }
 };

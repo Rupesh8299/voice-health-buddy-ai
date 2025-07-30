@@ -1,13 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Camera, Upload, X, Video, Image, Play, Pause } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Camera, Upload, X, Video, Image, Play, Pause } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MediaItem {
   id: string;
   file: File;
-  type: 'image' | 'video';
+  type: "image" | "video";
   preview: string;
   timestamp: Date;
 }
@@ -25,12 +25,12 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
   onLiveVideoStart,
   onLiveVideoStop,
   disabled = false,
-  maxItems = 10
+  maxItems = 10,
 }) => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [isLiveVideo, setIsLiveVideo] = useState(false);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -44,9 +44,9 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
         const mediaItem: MediaItem = {
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           file,
-          type: file.type.startsWith('image/') ? 'image' : 'video',
+          type: file.type.startsWith("image/") ? "image" : "video",
           preview: e.target?.result as string,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
         resolve(mediaItem);
       };
@@ -55,8 +55,8 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
   };
 
   const handleFileSelect = async (files: FileList) => {
-    const validFiles = Array.from(files).filter(file => 
-      file.type.startsWith('image/') || file.type.startsWith('video/')
+    const validFiles = Array.from(files).filter(
+      (file) => file.type.startsWith("image/") || file.type.startsWith("video/")
     );
 
     if (mediaItems.length + validFiles.length > maxItems) {
@@ -65,7 +65,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
     }
 
     const newMediaItems = await Promise.all(
-      validFiles.map(file => createMediaItem(file))
+      validFiles.map((file) => createMediaItem(file))
     );
 
     const updatedItems = [...mediaItems, ...newMediaItems];
@@ -98,47 +98,47 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
   };
 
   const removeMediaItem = (id: string) => {
-    const updatedItems = mediaItems.filter(item => item.id !== id);
+    const updatedItems = mediaItems.filter((item) => item.id !== id);
     setMediaItems(updatedItems);
     onMediaUpload(updatedItems);
   };
 
   const startLiveVideo = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment',
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
           width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }, 
-        audio: true 
+          height: { ideal: 720 },
+        },
+        audio: true,
       });
-      
+
       streamRef.current = stream;
-      
+
       if (liveVideoRef.current) {
         liveVideoRef.current.srcObject = stream;
         liveVideoRef.current.play();
       }
-      
+
       setIsLiveVideo(true);
       onLiveVideoStart?.();
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      alert('Could not access camera. Please check permissions.');
+      console.error("Error accessing camera:", error);
+      alert("Could not access camera. Please check permissions.");
     }
   };
 
   const stopLiveVideo = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
-    
+
     if (liveVideoRef.current) {
       liveVideoRef.current.srcObject = null;
     }
-    
+
     setIsLiveVideo(false);
     onLiveVideoStop?.();
   };
@@ -146,9 +146,9 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
   const clearAllMedia = () => {
     setMediaItems([]);
     onMediaUpload([]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
-    if (videoInputRef.current) videoInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+    if (videoInputRef.current) videoInputRef.current.value = "";
   };
 
   return (
@@ -164,7 +164,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
                 autoPlay
                 muted
                 playsInline
-                style={{ minHeight: '256px' }}
+                style={{ minHeight: "256px" }}
               />
               <div className="absolute top-2 right-2 flex gap-2">
                 <div className="px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">
@@ -188,16 +188,20 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
       )}
 
       {/* Upload Area */}
-      <Card className={cn(
-        "transition-all duration-300",
-        dragOver && "border-primary shadow-glow",
-        mediaItems.length > 0 && "border-accent"
-      )}>
+      <Card
+        className={cn(
+          "transition-all duration-300",
+          dragOver && "border-primary shadow-glow",
+          mediaItems.length > 0 && "border-accent"
+        )}
+      >
         <CardContent className="p-6">
           {mediaItems.length > 0 ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium">Uploaded Media ({mediaItems.length}/{maxItems})</h4>
+                <h4 className="font-medium">
+                  Uploaded Media ({mediaItems.length}/{maxItems})
+                </h4>
                 <Button
                   variant="outline"
                   size="sm"
@@ -207,11 +211,11 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
                   Clear All
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {mediaItems.map((item) => (
                   <div key={item.id} className="relative group">
-                    {item.type === 'image' ? (
+                    {item.type === "image" ? (
                       <img
                         src={item.preview}
                         alt="Uploaded"
@@ -234,7 +238,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
                     </Button>
                     <div className="absolute bottom-1 left-1">
                       <div className="px-1 py-0.5 bg-black/70 text-white text-xs rounded">
-                        {item.type === 'image' ? (
+                        {item.type === "image" ? (
                           <Image className="h-3 w-3" />
                         ) : (
                           <Video className="h-3 w-3" />
@@ -261,7 +265,9 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
                   <Upload className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">Upload photos or videos of your symptoms</p>
+                  <p className="text-sm font-medium">
+                    Upload photos or videos of your symptoms
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Drag and drop multiple files, use camera, or browse
                   </p>
@@ -269,7 +275,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
               </div>
             </div>
           )}
-          
+
           {/* Control Buttons */}
           <div className="flex flex-wrap gap-2 justify-center mt-4">
             <Button
@@ -281,7 +287,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
               <Camera className="h-4 w-4" />
               Photo
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -291,7 +297,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
               <Video className="h-4 w-4" />
               Video
             </Button>
-            
+
             <Button
               variant={isLiveVideo ? "destructive" : "secondary"}
               size="sm"
@@ -310,7 +316,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
                 </>
               )}
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"

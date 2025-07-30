@@ -17,10 +17,13 @@ const ImageAnalysisPage = () => {
     const formData = new FormData();
     formData.append("image", file);
 
+    console.log("🔍 Sending image to backend..."); // Debug log
+
     try {
-      const response = await fetch("http://localhost:5000/api/upload/image", {
+      const response = await fetch("/api/analyze-image", {
         method: "POST",
         body: formData,
+        // credentials: "include", // Uncomment if backend needs cookies/auth
       });
 
       if (!response.ok) {
@@ -28,6 +31,7 @@ const ImageAnalysisPage = () => {
       }
 
       const data = await response.json();
+      console.log("✅ Analysis result:", data); // Debug log
       setAnalysis(data.insights || data.analysis || "No analysis available.");
     } catch (err) {
       console.error(err);
