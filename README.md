@@ -80,60 +80,38 @@ npm install
 npm run dev
 ```
 
-The frontend will run on [http://localhost:8080](http://localhost:8080) by default.
+**Edit a file directly in GitHub**
 
-## 🧠 How It Works
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-### Image Upload
+**Use GitHub Codespaces**
 
-- User uploads an image via the UI.
-- The frontend sends a POST request to `/api/analyze-image` with the image.
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-### Backend Processing
+## What technologies are used for this project?
 
-- The backend receives the image, passes it to Google Vertex AI MedGemma, and returns the analysis.
+This project is built with:
 
-### Chat
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-- User can chat with the AI assistant via `/api/message`.
+## How can I deploy this project?
 
-## 🔑 Environment Variables
+Simply open [Lovable](https://lovable.dev/projects/a5f6ded9-2cd1-481e-aba2-29bda34a6386) and click on Share -> Publish.
 
-| Variable                    | Description                              |
-|----------------------------|------------------------------------------|
-| `PORT`                     | Backend server port                       |
-| `OPENROUTER_API_KEY`       | API key for OpenRouter/OpenAI            |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path to your GCP service account key |
-| `GOOGLE_CLOUD_PROJECT`     | Your Google Cloud project ID             |
+## Can I connect a custom domain to my Lovable project?
 
-## 🛠️ Tech Stack
+Yes, you can!
 
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, shadcn-ui
-- **Backend:** Node.js, Express, Google Vertex AI, OpenAI/OpenRouter
-- **AI Models:** MedGemma (Vertex AI), GPT (OpenAI/OpenRouter)
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## 📝 Development Tips
-
-- **Image Upload Endpoint:** Always use `/api/analyze-image` for image analysis.
-- **Chat Endpoint:** Use `/api/message` for chat queries.
-- **Logs:** Backend logs requests and AI responses for debugging.
-- **CORS:** The backend is CORS-enabled for local development.
-
-## 🧪 Testing
-
-- Use the UI to upload images and chat.
-- Check backend logs for request flow and errors.
-- Use dummy data in `medgemmaService.js` if you want to test without calling Vertex AI.
-
-## 🌐 Deployment
-
-- Deploy backend and frontend separately or together.
-- For custom domains or cloud deployment, update environment variables accordingly.
-
-## 📄 License
-
-MIT (or your preferred license)
-
-## 🙋‍♂️ Support
-
-For issues or feature requests, open an issue on GitHub or contact the maintainer.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
