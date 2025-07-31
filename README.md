@@ -41,13 +41,13 @@ _(Note: You'll need to create an `assets/screenshots` directory and add your act
 _Replace `screenshot-chat.png` and `screenshot-upload.png` with your actual file names._
 
 **Main Chat & Voice Interface:**
-![Chat Screenshot](src/assets/Screenshot 2025-07-31 215557.png)
+![Chat Screenshot](src/assets/image1.png)
 
 **Image Upload for Symptom Analysis:**
-![Upload Step 1](src/assets/Screenshot 2025-07-31 215643.png)  
-![Upload Step 2](src/assets/Screenshot 2025-07-31 215800.png)  
-![Upload Step 3](src/assets/Screenshot 2025-07-31 215949.png)  
-![Upload Step 4](src/assets/Screenshot 2025-07-31 220027.png)
+![Upload Step 1](src/assets/image2.png)  
+![Upload Step 2](src/assets/image3.png)  
+![Upload Step 3](src/assets/image4.png)  
+![Upload Step 4](src/assets/image5.png)
 
 ## ⚙️ Setup Instructions
 
