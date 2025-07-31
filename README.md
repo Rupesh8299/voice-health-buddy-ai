@@ -32,6 +32,23 @@ voice-health-buddy-ai/
 - **Multi-media Upload:** (Optional) Upload multiple images/videos or stream live video.
 - **Modern UI:** Built with React, TypeScript, Tailwind CSS, and shadcn-ui.
 
+## 📸 Screenshots
+
+Here's a glimpse of the Voice Health Buddy AI in action.
+
+_(Note: You'll need to create an `assets/screenshots` directory and add your actual screenshot files for these images to appear.)_
+
+_Replace `screenshot-chat.png` and `screenshot-upload.png` with your actual file names._
+
+**Main Chat & Voice Interface:**
+!(src/assets/Screenshot 2025-07-31 215557.png)
+
+**Image Upload for Symptom Analysis:**
+!(src/assets/Screenshot 2025-07-31 215643.png)
+!(src/assets/Screenshot 2025-07-31 215800.png)
+!(src/assets/Screenshot 2025-07-31 215949.png)
+!(src/assets/Screenshot 2025-07-31 220027.png)
+
 ## ⚙️ Setup Instructions
 
 ### 1. Prerequisites
@@ -99,12 +116,12 @@ The frontend will run on [http://localhost:8080](http://localhost:8080) by defau
 
 ## 🔑 Environment Variables
 
-| Variable                    | Description                              |
-|----------------------------|------------------------------------------|
-| `PORT`                     | Backend server port                       |
-| `OPENROUTER_API_KEY`       | API key for OpenRouter/OpenAI            |
+| Variable                         | Description                          |
+| -------------------------------- | ------------------------------------ |
+| `PORT`                           | Backend server port                  |
+| `OPENROUTER_API_KEY`             | API key for OpenRouter/OpenAI        |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Path to your GCP service account key |
-| `GOOGLE_CLOUD_PROJECT`     | Your Google Cloud project ID             |
+| `GOOGLE_CLOUD_PROJECT`           | Your Google Cloud project ID         |
 
 ## 🛠️ Tech Stack
 
