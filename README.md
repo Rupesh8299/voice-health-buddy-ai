@@ -36,10 +36,6 @@ voice-health-buddy-ai/
 
 Here's a glimpse of the Voice Health Buddy AI in action.
 
-_(Note: You'll need to create an `assets/screenshots` directory and add your actual screenshot files for these images to appear.)_
-
-_Replace `screenshot-chat.png` and `screenshot-upload.png` with your actual file names._
-
 **Main Chat & Voice Interface:**
 ![Chat Screenshot](src/assets/image1.png)
 
