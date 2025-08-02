@@ -16,6 +16,7 @@ export const TextToSpeech: React.FC<TextToSpeechProps> = ({
   const [isSpeaking, setIsSpeaking] = React.useState(false);
   const [isSupported, setIsSupported] = React.useState(true);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const speakingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!('speechSynthesis' in window)) {
@@ -37,38 +38,55 @@ export const TextToSpeech: React.FC<TextToSpeechProps> = ({
   const speak = () => {
     if (!text || !isSupported) return;
 
-    // Cancel any ongoing speech
+    // Cancel any ongoing speech and clear timers
     speechSynthesis.cancel();
+    if (speakingTimeoutRef.current) {
+      clearTimeout(speakingTimeoutRef.current);
+    }
 
     const utterance = new SpeechSynthesisUtterance(text);
     utteranceRef.current = utterance;
 
-    utterance.rate = 0.9;
+    // Enhanced speech settings for better quality
+    utterance.rate = 0.85; // Slightly slower for better comprehension
     utterance.pitch = 1;
-    utterance.volume = 0.8;
+    utterance.volume = 0.9;
 
     utterance.onstart = () => {
       setIsSpeaking(true);
       onSpeakingChange?.(true);
+      console.log('TTS: Started speaking');
     };
 
     utterance.onend = () => {
-      setIsSpeaking(false);
-      onSpeakingChange?.(false);
+      // Add a small delay to ensure complete audio finish
+      speakingTimeoutRef.current = setTimeout(() => {
+        setIsSpeaking(false);
+        onSpeakingChange?.(false);
+        console.log('TTS: Finished speaking');
+      }, 200);
     };
 
     utterance.onerror = () => {
       setIsSpeaking(false);
       onSpeakingChange?.(false);
+      console.log('TTS: Error occurred');
     };
 
-    speechSynthesis.speak(utterance);
+    // Add a small delay before speaking to ensure proper coordination
+    setTimeout(() => {
+      speechSynthesis.speak(utterance);
+    }, 100);
   };
 
   const stop = () => {
     speechSynthesis.cancel();
+    if (speakingTimeoutRef.current) {
+      clearTimeout(speakingTimeoutRef.current);
+    }
     setIsSpeaking(false);
     onSpeakingChange?.(false);
+    console.log('TTS: Manually stopped');
   };
 
   if (!isSupported) {

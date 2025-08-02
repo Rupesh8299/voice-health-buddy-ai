@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ContinuousVoiceRecorder } from "@/components/ContinuousVoiceRecorder";
+import { EnhancedVoiceRecorder } from "@/components/EnhancedVoiceRecorder";
 import { MultiMediaUpload } from "@/components/MultiMediaUpload";
 import { ChatInterface } from "@/components/ChatInterface";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
@@ -298,10 +298,11 @@ export const HealthAssistant: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ContinuousVoiceRecorder
+                <EnhancedVoiceRecorder
                   onTranscriptChange={handleTranscriptChange}
                   onConversationModeChange={handleConversationModeChange}
-                  disabled={isLoading || isSpeaking}
+                  disabled={isLoading}
+                  isSpeaking={isSpeaking}
                 />
                 {(currentTranscript || pendingTranscript) && (
                   <div className="mt-4 p-3 bg-muted rounded-lg">

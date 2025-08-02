@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const chatRoute = require('./routes/chatRoute');
 const imageRoutes = require('./routes/imageRoute');
+const { startCleanupJob } = require('./utils/cleanup');
 
 
 const app = express();
@@ -54,4 +55,8 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
+  // Start cleanup job for conversation memory
+  startCleanupJob();
+  console.log('🧹 Conversation cleanup job started');
 });
