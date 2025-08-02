@@ -17,7 +17,7 @@ voice-health-buddy-ai/
 │   └── ...
 │
 ├── src/             # Frontend (React + Vite + TypeScript)
-│   ├── components/
+│   ├── components/ 
 │   ├── pages/
 │   └── ...
 │
