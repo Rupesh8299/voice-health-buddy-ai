@@ -25,6 +25,10 @@ const buttonVariants = cva(
           "bg-accent text-accent-foreground hover:bg-accent/90 shadow-soft hover:shadow-glow transition-all duration-300 hover:scale-105",
         camera:
           "bg-gradient-to-r from-primary to-accent text-white hover:shadow-glow transition-all duration-300",
+        media:
+          "relative bg-background border border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-110 transition-all duration-300 shadow-sm hover:shadow-glow rounded-full group",
+        "media-active":
+          "bg-primary text-primary-foreground border-primary shadow-glow scale-105 rounded-full border",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -33,6 +37,7 @@ const buttonVariants = cva(
         icon: "h-10 w-10",
         voice: "h-16 w-16 rounded-full",
         hero: "h-14 px-8 text-base",
+        media: "h-14 w-14 rounded-full p-0",
       },
     },
     defaultVariants: {
