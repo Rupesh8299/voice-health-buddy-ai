@@ -1,7 +1,9 @@
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Camera, Upload, X, Video, Image, Play, Pause } from "lucide-react";
+import { MediaButton } from "@/components/MediaButton";
+import { CameraDeviceSelector } from "@/components/CameraDeviceSelector";
+import { Camera, Upload, X, Video, Image, Play, Pause, FolderOpen, VideoIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MediaItem {
@@ -30,6 +32,8 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [isLiveVideo, setIsLiveVideo] = useState(false);
+  const [selectedCameraId, setSelectedCameraId] = useState<string>("");
+  const [cameraFacingMode, setCameraFacingMode] = useState<string>("environment");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -105,15 +109,22 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
 
   const startLiveVideo = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
+      const constraints: MediaStreamConstraints = {
+        video: selectedCameraId 
+          ? {
+              deviceId: { exact: selectedCameraId },
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            }
+          : {
+              facingMode: cameraFacingMode,
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+            },
         audio: true,
-      });
+      };
 
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
 
       if (liveVideoRef.current) {
@@ -125,7 +136,7 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
       onLiveVideoStart?.();
     } catch (error) {
       console.error("Error accessing camera:", error);
-      alert("Could not access camera. Please check permissions.");
+      alert("Could not access camera. Please check permissions and try selecting a different camera.");
     }
   };
 
@@ -151,8 +162,28 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
     if (videoInputRef.current) videoInputRef.current.value = "";
   };
 
+  const handleCameraDeviceSelect = (deviceId: string, facingMode?: string) => {
+    setSelectedCameraId(deviceId);
+    if (facingMode) {
+      setCameraFacingMode(facingMode);
+    }
+    
+    // If currently live, restart with new device
+    if (isLiveVideo) {
+      stopLiveVideo();
+      setTimeout(() => startLiveVideo(), 100);
+    }
+  };
+
   return (
     <div className="space-y-4">
+      {/* Camera Device Selector */}
+      <CameraDeviceSelector
+        onDeviceSelect={handleCameraDeviceSelect}
+        selectedDeviceId={selectedCameraId}
+        disabled={disabled}
+      />
+
       {/* Live Video Stream */}
       {isLiveVideo && (
         <Card className="border-accent">
@@ -276,56 +307,37 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
             </div>
           )}
 
-          {/* Control Buttons */}
-          <div className="flex flex-wrap gap-2 justify-center mt-4">
-            <Button
-              variant="camera"
-              size="sm"
+          {/* Enhanced Control Buttons - Material Design Style */}
+          <div className="flex flex-wrap gap-4 justify-center mt-6">
+            <MediaButton
+              icon={Camera}
+              label="Take Photo"
               onClick={() => cameraInputRef.current?.click()}
               disabled={disabled || mediaItems.length >= maxItems}
-            >
-              <Camera className="h-4 w-4" />
-              Photo
-            </Button>
+            />
 
-            <Button
-              variant="outline"
-              size="sm"
+            <MediaButton
+              icon={VideoIcon}
+              label="Record Video"
               onClick={() => videoInputRef.current?.click()}
               disabled={disabled || mediaItems.length >= maxItems}
-            >
-              <Video className="h-4 w-4" />
-              Video
-            </Button>
+            />
 
-            <Button
-              variant={isLiveVideo ? "destructive" : "secondary"}
-              size="sm"
+            <MediaButton
+              icon={isLiveVideo ? Pause : Play}
+              label={isLiveVideo ? "Stop Live Stream" : "Start Live Stream"}
               onClick={isLiveVideo ? stopLiveVideo : startLiveVideo}
               disabled={disabled}
-            >
-              {isLiveVideo ? (
-                <>
-                  <Pause className="h-4 w-4" />
-                  Stop Live
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4" />
-                  Go Live
-                </>
-              )}
-            </Button>
+              active={isLiveVideo}
+              loading={isLiveVideo && !liveVideoRef.current?.srcObject}
+            />
 
-            <Button
-              variant="outline"
-              size="sm"
+            <MediaButton
+              icon={FolderOpen}
+              label="Browse Files"
               onClick={() => fileInputRef.current?.click()}
               disabled={disabled || mediaItems.length >= maxItems}
-            >
-              <Upload className="h-4 w-4" />
-              Browse
-            </Button>
+            />
           </div>
         </CardContent>
       </Card>

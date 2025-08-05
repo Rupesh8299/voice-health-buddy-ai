@@ -6,6 +6,8 @@ import { EnhancedVoiceRecorder } from "@/components/EnhancedVoiceRecorder";
 import { MultiMediaUpload } from "@/components/MultiMediaUpload";
 import { ChatInterface } from "@/components/ChatInterface";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 import { sendMessage, uploadImage } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -15,8 +17,11 @@ import {
   Mic,
   Shield,
   Clock,
+  Brain,
+  Stethoscope,
 } from "lucide-react";
 import heroImage from "@/assets/health-hero.jpg";
+import medicoPeerLogo from "@/assets/medicopeer-logo.png";
 
 interface Message {
   id: string;
@@ -250,25 +255,37 @@ export const HealthAssistant: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-health-gradient-subtle">
+      {/* Navigation Header */}
+      <NavigationHeader />
+      
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Health Assistant"
+            alt="MedicoPeer Health Assistant"
             className="w-full h-full object-cover opacity-20"
           />
         </div>
         <div className="relative container mx-auto px-4 py-16 text-center">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-center mb-6">
-              <Activity className="h-8 w-8 text-primary mr-3" />
-              <h1 className="text-4xl md:text-5xl font-bold bg-health-gradient bg-clip-text text-transparent">
-                Voice-Based Health Assistant
-              </h1>
+              <img 
+                src={medicoPeerLogo} 
+                alt="MedicoPeer" 
+                className="h-12 w-12 mr-4 object-contain"
+              />
+              <div className="text-left">
+                <h1 className="text-4xl md:text-5xl font-bold bg-health-gradient bg-clip-text text-transparent">
+                  MedicoPeer
+                </h1>
+                <p className="text-lg text-muted-foreground">
+                  AI-Powered Health Assistant
+                </p>
+              </div>
             </div>
             <p className="text-xl text-muted-foreground mb-8">
-              Describe your symptoms or show visible ones for medical guidance
+              Advanced AI technology for personalized health guidance through voice and multimedia interactions
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Badge variant="secondary" className="text-sm">
@@ -278,6 +295,14 @@ export const HealthAssistant: React.FC = () => {
               <Badge variant="secondary" className="text-sm">
                 <Clock className="h-3 w-3 mr-1" />
                 24/7 Available
+              </Badge>
+              <Badge variant="secondary" className="text-sm">
+                <Brain className="h-3 w-3 mr-1" />
+                AI-Powered
+              </Badge>
+              <Badge variant="secondary" className="text-sm">
+                <Stethoscope className="h-3 w-3 mr-1" />
+                Medical Grade
               </Badge>
             </div>
           </div>
@@ -431,6 +456,9 @@ export const HealthAssistant: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
