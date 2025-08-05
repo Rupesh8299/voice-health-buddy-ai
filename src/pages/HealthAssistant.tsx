@@ -21,7 +21,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import heroImage from "@/assets/health-hero.jpg";
-import medicoPeerLogo from "@/assets/medicopeer-logo.png";
+import medicoPeerLogo from "@/assets/logoMedicoicon.png";
 
 interface Message {
   id: string;
@@ -257,7 +257,7 @@ export const HealthAssistant: React.FC = () => {
     <div className="min-h-screen bg-health-gradient-subtle">
       {/* Navigation Header */}
       <NavigationHeader />
-      
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
@@ -270,9 +270,9 @@ export const HealthAssistant: React.FC = () => {
         <div className="relative container mx-auto px-4 py-16 text-center">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-center mb-6">
-              <img 
-                src={medicoPeerLogo} 
-                alt="MedicoPeer" 
+              <img
+                src={medicoPeerLogo}
+                alt="MedicoPeer"
                 className="h-12 w-12 mr-4 object-contain"
               />
               <div className="text-left">
@@ -285,7 +285,8 @@ export const HealthAssistant: React.FC = () => {
               </div>
             </div>
             <p className="text-xl text-muted-foreground mb-8">
-              Advanced AI technology for personalized health guidance through voice and multimedia interactions
+              Advanced AI technology for personalized health guidance through
+              voice and multimedia interactions
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Badge variant="secondary" className="text-sm">

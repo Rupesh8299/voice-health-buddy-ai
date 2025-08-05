@@ -1,18 +1,18 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { LogOut, User, FileText, Shield } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { LogOut, User, FileText, Shield } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Link } from 'react-router-dom';
-import medicoPeerLogo from '@/assets/medicopeer-logo.png';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
+import medicoPeerLogo from "@/assets/logoMedicoicon.png";
 
 export const NavigationHeader: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -38,7 +38,7 @@ export const NavigationHeader: React.FC = () => {
     if (user?.email) {
       return user.email.charAt(0).toUpperCase();
     }
-    return 'U';
+    return "U";
   };
 
   return (
@@ -46,18 +46,16 @@ export const NavigationHeader: React.FC = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
-          <img 
-            src={medicoPeerLogo} 
-            alt="MedicoPeer" 
+          <img
+            src={medicoPeerLogo}
+            alt="MedicoPeer"
             className="h-10 w-10 object-contain"
           />
           <div>
             <h1 className="text-xl font-bold bg-health-gradient bg-clip-text text-transparent">
               MedicoPeer
             </h1>
-            <p className="text-xs text-muted-foreground">
-              AI Health Assistant
-            </p>
+            <p className="text-xs text-muted-foreground">AI Health Assistant</p>
           </div>
         </div>
 
@@ -82,7 +80,10 @@ export const NavigationHeader: React.FC = () => {
           {/* User Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full"
+              >
                 <Avatar className="h-10 w-10">
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {getUserInitials()}
@@ -93,14 +94,14 @@ export const NavigationHeader: React.FC = () => {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <div className="flex flex-col space-y-1 p-2">
                 <p className="text-sm font-medium leading-none">
-                  {user?.email || 'User'}
+                  {user?.email || "User"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   Signed in
                 </p>
               </div>
               <DropdownMenuSeparator />
-              
+
               {/* Mobile Legal Links */}
               <div className="md:hidden">
                 <Link to="/disclaimer">

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Heart, Shield, FileText, Mail, ExternalLink } from 'lucide-react';
-import medicoPeerLogo from '@/assets/medicopeer-logo.png';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Heart, Shield, FileText, Mail, ExternalLink } from "lucide-react";
+import medicoPeerLogo from "@/assets/logoMedicoicon.png";
 
 export const Footer: React.FC = () => {
   return (
@@ -12,9 +12,9 @@ export const Footer: React.FC = () => {
           {/* Brand Section */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <img 
-                src={medicoPeerLogo} 
-                alt="MedicoPeer" 
+              <img
+                src={medicoPeerLogo}
+                alt="MedicoPeer"
                 className="h-8 w-8 object-contain"
               />
               <div>
@@ -27,8 +27,9 @@ export const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Advanced AI technology providing personalized health guidance through voice and multimedia interactions. 
-              Get real-time medical insights and symptom analysis.
+              Advanced AI technology providing personalized health guidance
+              through voice and multimedia interactions. Get real-time medical
+              insights and symptom analysis.
             </p>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <span>Made with</span>
@@ -42,13 +43,19 @@ export const Footer: React.FC = () => {
             <h4 className="font-medium mb-4">Legal & Privacy</h4>
             <div className="space-y-2">
               <Link to="/disclaimer">
-                <Button variant="ghost" className="w-full justify-start h-auto p-2 text-sm">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-2 text-sm"
+                >
                   <Shield className="h-4 w-4 mr-2 flex-shrink-0" />
                   Medical Disclaimer
                 </Button>
               </Link>
               <Link to="/terms">
-                <Button variant="ghost" className="w-full justify-start h-auto p-2 text-sm">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-2 text-sm"
+                >
                   <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
                   Terms of Use
                 </Button>
@@ -60,18 +67,22 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="font-medium mb-4">Support</h4>
             <div className="space-y-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start h-auto p-2 text-sm"
-                onClick={() => window.open('mailto:support@medicopeer.com', '_blank')}
+                onClick={() =>
+                  window.open("mailto:support@medicopeer.com", "_blank")
+                }
               >
                 <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
                 Contact Support
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="w-full justify-start h-auto p-2 text-sm"
-                onClick={() => window.open('https://help.medicopeer.com', '_blank')}
+                onClick={() =>
+                  window.open("https://help.medicopeer.com", "_blank")
+                }
               >
                 <ExternalLink className="h-4 w-4 mr-2 flex-shrink-0" />
                 Help Center
