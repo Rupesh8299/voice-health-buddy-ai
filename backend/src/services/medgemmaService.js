@@ -10,35 +10,22 @@ const modelId = 'medgemma-4b-pt';
 const endpoint = `projects/${project}/locations/${location}/publishers/google/models/${modelId}`;
 
 async function analyzeImage(imageBuffer) {
-  console.log("🧠 Calling MedGemma model...");
+  console.log("🧠 Mock MedGemma analysis...");
   console.log("📏 Buffer size:", imageBuffer.length);
 
-  const request = {
-    endpoint,
-    instances: [
-      {
-        content: imageBuffer.toString('base64'),
-        mimeType: 'image/png', // confirm multer gives png or jpeg
-      },
-    ],
+  // Return formatted mock response until GCP credentials are set up
+  const mockAnalysis = {
+    analysis: "This appears to be a medical image. To provide accurate analysis, please ensure the GCP credentials are properly configured.",
+    confidence: 0.95,
+    recommendations: [
+      "Set up Google Cloud Platform credentials",
+      "Add the service account key as gcp-key.json in the backend directory",
+      "Ensure proper IAM permissions are configured"
+    ]
   };
-
-  try {
-    console.log("Sending image to MedGemma...");
-    const [response] = await client.predict(request); // <-- fix: use 'client'
-    console.log("✅ MedGemma raw response:", response);
-
-    if (!response.predictions || response.predictions.length === 0) {
-      console.log("⚠️ No predictions found.");
-      return 'No visible findings in the image.';
-    }
-
-    console.log("✅ Analysis result:", response.predictions[0]); // log final result
-    return response.predictions[0];
-  } catch (error) {
-    console.error("❌ MedGemma API error:", error.message);
-    return 'Failed to analyze image.';
-  }
+  
+  // Format the response as a string
+  return `Analysis (${mockAnalysis.confidence * 100}% confidence): ${mockAnalysis.analysis}\n\nRecommendations:\n${mockAnalysis.recommendations.map(rec => `• ${rec}`).join('\n')}`;
 
   // return "Dummy analysis result"; // Uncomment for dummy data
 }

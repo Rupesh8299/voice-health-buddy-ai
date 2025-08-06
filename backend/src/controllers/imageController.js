@@ -8,10 +8,22 @@ const handleImageUpload = async (req, res) => {
     console.log("File received:", req.file?.originalname);
     console.log("File size:", req.file?.size);
 
-    if (!req.file || !req.file.buffer) {
-      console.error("❌ No file received or buffer is empty.");
+    if (!req.file) {
+      console.error("❌ No file received.");
       return res.status(400).json({ error: 'No image file uploaded.' });
     }
+
+    if (!req.file.buffer || req.file.buffer.length === 0) {
+      console.error("❌ File buffer is empty.");
+      return res.status(400).json({ error: 'Uploaded file is empty.' });
+    }
+
+    // Log more details about the uploaded file
+    console.log("📄 File details:", {
+      filename: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+    });
 
     const imageBuffer = req.file.buffer;
 
@@ -34,9 +46,16 @@ const handleImageUpload = async (req, res) => {
 
     console.log("✅ GPT Response:", response);
 
+    // Ensure both insights and analysis are strings
+    // Format responses
+    const formattedGemmaAnalysis = typeof gemmaAnalysis === 'string' ? gemmaAnalysis : JSON.stringify(gemmaAnalysis);
+    const formattedGPTResponse = typeof response === 'string' ? response : JSON.stringify(response);
+    
+    // Send both analyses
     res.json({
-      insights: gemmaAnalysis,
-      analysis: response,
+      insights: formattedGemmaAnalysis,
+      analysis: formattedGPTResponse,
+      recommendations: formattedGPTResponse.split('\n').filter(line => line.trim().startsWith('•')),
     });
   } catch (error) {
     console.error('❌ Error in imageController:', error.message);
