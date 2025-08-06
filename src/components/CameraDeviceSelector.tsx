@@ -28,14 +28,42 @@ export const CameraDeviceSelector: React.FC<CameraDeviceSelectorProps> = ({
   const getDevices = async () => {
     try {
       setIsLoading(true);
+      console.log('🎥 Starting camera device enumeration...');
       
-      // Request camera permissions first
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop()); // Clean up
-      setHasPermission(true);
+      // Step 1: Request basic camera access first with minimal constraints
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { min: 320, ideal: 640, max: 1920 },
+            height: { min: 240, ideal: 480, max: 1080 }
+          } 
+        });
+        console.log('✅ Basic camera access granted');
+        setHasPermission(true);
+        
+        // Clean up the test stream
+        stream.getTracks().forEach(track => track.stop());
+      } catch (basicError) {
+        console.error('❌ Basic camera access failed:', basicError);
+        
+        // Fallback: Try with minimal constraints
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          console.log('✅ Fallback camera access granted');
+          setHasPermission(true);
+          stream.getTracks().forEach(track => track.stop());
+        } catch (fallbackError) {
+          console.error('❌ Fallback camera access failed:', fallbackError);
+          setHasPermission(false);
+          return;
+        }
+      }
       
-      // Now get the actual device list
+      // Step 2: Enumerate devices after successful access
       const deviceList = await navigator.mediaDevices.enumerateDevices();
+      console.log('📱 Available devices:', deviceList.length);
+      
       const videoDevices = deviceList
         .filter(device => device.kind === 'videoinput')
         .map(device => ({
@@ -44,21 +72,24 @@ export const CameraDeviceSelector: React.FC<CameraDeviceSelectorProps> = ({
           kind: device.kind,
         }));
 
+      console.log('🎥 Video devices found:', videoDevices.length);
       setDevices(videoDevices);
 
-      // Auto-select a suitable camera
+      // Step 3: Auto-select a suitable camera
       if (videoDevices.length > 0 && !selectedDeviceId) {
-        // Prefer environment/back camera if available
+        // Try to find back/environment camera first
         const backCamera = videoDevices.find(device => 
           device.label.toLowerCase().includes('back') || 
           device.label.toLowerCase().includes('environment') ||
           device.label.toLowerCase().includes('rear')
         );
+        
         const preferredDevice = backCamera || videoDevices[0];
-        onDeviceSelect(preferredDevice.deviceId, 'environment');
+        console.log('🎯 Auto-selecting camera:', preferredDevice.label);
+        onDeviceSelect(preferredDevice.deviceId, backCamera ? 'environment' : 'user');
       }
     } catch (error) {
-      console.error('Error accessing cameras:', error);
+      console.error('❌ Camera enumeration error:', error);
       setHasPermission(false);
     } finally {
       setIsLoading(false);

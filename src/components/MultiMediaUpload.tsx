@@ -109,34 +109,93 @@ export const MultiMediaUpload: React.FC<MultiMediaUploadProps> = ({
 
   const startLiveVideo = async () => {
     try {
-      const constraints: MediaStreamConstraints = {
-        video: selectedCameraId 
-          ? {
-              deviceId: { exact: selectedCameraId },
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
-            }
-          : {
-              facingMode: cameraFacingMode,
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
-            },
-        audio: true,
-      };
+      console.log('🎥 Starting live video with camera:', selectedCameraId);
+      
+      // Step 1: Try with selected camera device
+      let constraints: MediaStreamConstraints;
+      
+      if (selectedCameraId) {
+        constraints = {
+          video: {
+            deviceId: { exact: selectedCameraId },
+            width: { min: 320, ideal: 640, max: 1280 },
+            height: { min: 240, ideal: 480, max: 720 },
+          },
+          audio: false, // Disable audio for live video to prevent feedback
+        };
+      } else {
+        // Fallback to facing mode
+        constraints = {
+          video: {
+            facingMode: cameraFacingMode,
+            width: { min: 320, ideal: 640, max: 1280 },
+            height: { min: 240, ideal: 480, max: 720 },
+          },
+          audio: false,
+        };
+      }
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('🎬 Requesting video stream with constraints:', constraints);
+      let stream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      // If specific device fails, try fallback
+      if (!stream && selectedCameraId) {
+        console.log('⚠️ Specific device failed, trying fallback...');
+        const fallbackConstraints = {
+          video: {
+            facingMode: cameraFacingMode,
+            width: { min: 320, ideal: 640 },
+            height: { min: 240, ideal: 480 },
+          },
+          audio: false,
+        };
+        stream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+      }
+
       streamRef.current = stream;
+      console.log('✅ Video stream obtained:', stream.getVideoTracks().length, 'video tracks');
 
       if (liveVideoRef.current) {
         liveVideoRef.current.srcObject = stream;
-        liveVideoRef.current.play();
+        
+        // Add event listeners for better debugging
+        liveVideoRef.current.onloadedmetadata = () => {
+          console.log('📺 Video metadata loaded');
+          liveVideoRef.current?.play().catch(console.error);
+        };
+        
+        liveVideoRef.current.oncanplay = () => {
+          console.log('▶️ Video can play');
+        };
+        
+        liveVideoRef.current.onerror = (e) => {
+          console.error('❌ Video element error:', e);
+        };
+        
+        // Ensure video plays
+        await liveVideoRef.current.play();
       }
 
       setIsLiveVideo(true);
       onLiveVideoStart?.();
+      console.log('🎉 Live video started successfully');
+      
     } catch (error) {
-      console.error("Error accessing camera:", error);
-      alert("Could not access camera. Please check permissions and try selecting a different camera.");
+      console.error("❌ Live video error:", error);
+      
+      // More specific error messages
+      let errorMessage = "Could not access camera. ";
+      if (error.name === 'NotFoundError') {
+        errorMessage += "No camera device found.";
+      } else if (error.name === 'NotAllowedError') {
+        errorMessage += "Camera permission denied.";
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage += "Camera constraints not supported.";
+      } else {
+        errorMessage += "Please check permissions and try again.";
+      }
+      
+      alert(errorMessage);
     }
   };
 
