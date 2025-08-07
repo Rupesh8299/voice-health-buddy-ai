@@ -21,7 +21,7 @@
   "devDependencies": {
     "nodemon": "^3.1.10"
   },
-  "description": "1. **Install dependencies:**\r    ```sh\r    npm install\r    ```\r 2. **Configure environment variables:**\r    - Copy `.env` and fill in your API keys for OpenRouter, Replicate, and Infermedica.\r 3. **Run the server (development):**\r    ```sh\r    npm run dev\r    ```\r 4. **Run the server (production):**\r    ```sh\r    npm start\r    ```",
+  "description": "1. **Install dependencies:**\r    ```sh\r    npm install\r    ```\r 2. **Configure environment variables:**\r    - Copy `.env` and fill in your API keys for OpenRouter and GCP.\r 3. **Run the server (development):**\r    ```sh\r    npm run dev\r    ```\r 4. **Run the server (production):**\r    ```sh\r    npm start\r    ```",
   "keywords": [],
   "author": "",
   "license": "ISC"

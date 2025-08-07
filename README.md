@@ -17,7 +17,7 @@ voice-health-buddy-ai/
 │   └── ...
 │
 ├── src/             # Frontend (React + Vite + TypeScript)
-│   ├── components/ 
+│   ├── components/
 │   ├── pages/
 │   └── ...
 │
@@ -104,11 +104,13 @@ The frontend will run on [http://localhost:8080](http://localhost:8080) by defau
 
 ### Backend Processing
 
-- The backend receives the image, passes it to Google Vertex AI MedGemma, and returns the analysis.
+- The backend receives the image and processes it through Google Vertex AI MedGemma for medical analysis.
+- The analysis is enhanced with insights from GPT for better understanding and recommendations.
 
 ### Chat
 
-- User can chat with the AI assistant via `/api/message`.
+- Users can interact with the AI health assistant via `/api/message` endpoint.
+- The assistant provides health-related information and guidance.
 
 ## 🔑 Environment Variables
 

@@ -157,7 +157,7 @@ export const HealthAssistant: React.FC = () => {
     if (mediaItems.length === 0) return;
 
     const mediaItemsForMessage = mediaItems.map((item) => ({
-      id: generateUniqueId(),  // Use our unique ID generator here too
+      id: generateUniqueId(), // Use our unique ID generator here too
       type: item.type,
       preview: item.preview,
       file: item.file,
@@ -182,15 +182,21 @@ export const HealthAssistant: React.FC = () => {
       if (imageItems.length > 0) {
         for (const item of imageItems) {
           const response = await uploadImage(item.file);
-          
+
           // Add MedGemma's insights
           if (response.insights) {
-            addMessage("🔬 MedGemma Analysis:\n" + response.insights, "assistant");
+            addMessage(
+              "🔬 MedGemma Analysis:\n" + response.insights,
+              "assistant"
+            );
           }
 
           // Add GPT's analysis
           if (response.analysis) {
-            addMessage("🤖 AI Assistant Analysis:\n" + response.analysis, "assistant");
+            addMessage(
+              "🤖 AI Assistant Analysis:\n" + response.analysis,
+              "assistant"
+            );
           }
 
           // Add recommendations if any
