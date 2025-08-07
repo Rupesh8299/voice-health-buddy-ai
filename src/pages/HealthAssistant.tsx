@@ -63,6 +63,11 @@ export const HealthAssistant: React.FC = () => {
   ]);
   const { toast } = useToast();
 
+  // Generate a unique ID combining timestamp and random string
+  const generateUniqueId = () => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
+
   const addMessage = (
     content: string,
     sender: "user" | "assistant",
@@ -75,7 +80,7 @@ export const HealthAssistant: React.FC = () => {
     }>
   ) => {
     const message: Message = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       content,
       sender,
       timestamp: new Date(),
@@ -152,7 +157,7 @@ export const HealthAssistant: React.FC = () => {
     if (mediaItems.length === 0) return;
 
     const mediaItemsForMessage = mediaItems.map((item) => ({
-      id: item.id,
+      id: generateUniqueId(), // Use our unique ID generator here too
       type: item.type,
       preview: item.preview,
       file: item.file,
@@ -177,11 +182,27 @@ export const HealthAssistant: React.FC = () => {
       if (imageItems.length > 0) {
         for (const item of imageItems) {
           const response = await uploadImage(item.file);
-          addMessage(response.insights, "assistant");
 
+          // Add MedGemma's insights
+          if (response.insights) {
+            addMessage(
+              "🔬 MedGemma Analysis:\n" + response.insights,
+              "assistant"
+            );
+          }
+
+          // Add GPT's analysis
+          if (response.analysis) {
+            addMessage(
+              "🤖 AI Assistant Analysis:\n" + response.analysis,
+              "assistant"
+            );
+          }
+
+          // Add recommendations if any
           if (response.recommendations) {
             const recommendationsText =
-              "Recommendations:\n" + response.recommendations.join("\n• ");
+              "💡 Recommendations:\n" + response.recommendations.join("\n• ");
             addMessage(recommendationsText, "assistant");
           }
         }

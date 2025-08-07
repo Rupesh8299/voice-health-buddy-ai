@@ -1,6 +1,6 @@
 // API service for health assistant backend integration
 
-const API_BASE_URL = '/api'; // Will be configured for your backend
+const API_BASE_URL = 'http://localhost:5000/api'; // Backend server running on port 5000
 
 // Define ChatMessage type for OpenRouter messages
 export type ChatMessage = {
@@ -65,7 +65,7 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`${API_BASE_URL}/upload/image`, {
+    const response = await fetch(`${API_BASE_URL}/analyze-image`, {
       method: 'POST',
       body: formData,
     });
