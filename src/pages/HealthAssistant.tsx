@@ -75,7 +75,7 @@ export const HealthAssistant: React.FC = () => {
     }>
   ) => {
     const message: Message = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       content,
       sender,
       timestamp: new Date(),
@@ -177,8 +177,19 @@ export const HealthAssistant: React.FC = () => {
       if (imageItems.length > 0) {
         for (const item of imageItems) {
           const response = await uploadImage(item.file);
-          addMessage(response.insights, "assistant");
 
+          // Add MedGemma's analysis
+          addMessage("MedGemma Analysis:\n" + response.insights, "assistant");
+
+          // Add GPT's interpretation
+          if (response.analysis) {
+            addMessage(
+              "AI Assistant's Interpretation:\n" + response.analysis,
+              "assistant"
+            );
+          }
+
+          // Add recommendations if any
           if (response.recommendations) {
             const recommendationsText =
               "Recommendations:\n" + response.recommendations.join("\n• ");

@@ -10,7 +10,8 @@ const { startCleanupJob } = require('./utils/cleanup');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({origin: ["http://localhost:8080","https://voice-health-buddy-ai.vercel.appl.app"], 
+methods: ["GET", "POST", "PUT", "DELETE"],credentials: true}));
 app.use(express.json());
 
 // --- Move logging middleware above routes ---
@@ -46,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', chatRoute);
-app.use('/api/upload', imageRoutes);
+app.use('/api', imageRoutes);
 
 
 app.get('/', (req, res) => {

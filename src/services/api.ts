@@ -1,6 +1,6 @@
 // API service for health assistant backend integration
 
-const API_BASE_URL = '/api'; // Will be configured for your backend
+const API_BASE_URL = 'http://52.66.98.37:5000'; // Will be configured for your backend
 
 // Define ChatMessage type for OpenRouter messages
 export type ChatMessage = {
@@ -31,7 +31,7 @@ export interface ImageUploadResponse {
 // Send text message to health assistant
 export const sendMessage = async (request: MessageRequest): Promise<MessageResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/message`, {
+    const response = await fetch(`${API_BASE_URL}/api/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`${API_BASE_URL}/upload/image`, {
+    const response = await fetch(`${API_BASE_URL}/api/upload/image`, {
       method: 'POST',
       body: formData,
     });
