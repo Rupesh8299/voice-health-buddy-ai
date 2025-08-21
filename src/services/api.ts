@@ -1,6 +1,6 @@
 // API service for health assistant backend integration
 
-const API_BASE_URL = 'https://voice-health-buddy-ai-3m9x.vercel.app/'; // Will be configured for your backend
+const API_BASE_URL = 'https://voice-health-buddy-ai-3m9x.vercel.app'; // Will be configured for your backend
 
 // Define ChatMessage type for OpenRouter messages
 export type ChatMessage = {
